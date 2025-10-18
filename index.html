@@ -1244,26 +1244,6 @@
                         <img loading="lazy" src="./images/2.jpg" alt="">
                     </a>
                 </div>
-                <div>
-                    <a href="./images/19.jpg">
-                        <img loading="lazy" src="./images/19.jpg" alt="">
-                    </a>
-                </div>
-                <div>
-                    <a href="./images/11.1.jpg">
-                        <img loading="lazy" src="./images/11.1.jpg" alt="">
-                    </a>
-                </div>
-                <div>
-                    <a href="./images/21.1.jpg">
-                        <img loading="lazy" src="./images/21.1.jpg" alt="">
-                    </a>
-                </div>
-                <div>
-                    <a href="./images/13.1.jpg">
-                        <img loading="lazy" src="./images/13.1.jpg" alt="">
-                    </a>
-                </div>
             </div>
         </div>
 </section>
@@ -1920,6 +1900,17 @@
     }
     else {
         $('.btn_play').html('<span class="spinner-border border-0 d-flex justify-content-center align-items-center"><i class="ti ti-music "></i> </span>')
+    }
+    function updateButton() {
+        if (myAudio.paused) {
+            btn.innerHTML = '<i class="ti ti-player-play"></i>'; // trạng thái dừng
+        } else {
+            btn.innerHTML = `
+      <span class="spinner-border border-0 d-flex justify-content-center align-items-center">
+        <i class="ti ti-music"></i>
+      </span>
+    `; // trạng thái đang phát
+        }
     }
     function togglePlay() {
 

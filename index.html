@@ -640,6 +640,33 @@
             width: 100% !important;
         }
     }
+
+    .gift::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120%;
+        height: 120%;
+        background: rgb(71 87 56 / 75%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(1);
+        animation: rippleEffect 1.5s ease-out infinite;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    @keyframes rippleEffect {
+        0% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.5;
+        }
+
+        100% {
+            transform: translate(-50%, -50%) scale(2.5);
+            opacity: 0;
+        }
+    }
 </style>
 <!-- BANNER -->
 <section id="banner" class="banner uk-position-relative uk-flex-middle uk-flex-center" uk-grid uk-height-viewport>
@@ -1533,10 +1560,10 @@
 <!-- END MESSEGER -->
 
 <!-- GIFT -->
-<div class="uk-position-fixed uk-position-bottom-right uk-position-small" style="bottom: 4rem">
-    <a href="#modal-gift" class="btn-icon uk-icon-link uk-position-relative bg-primary-color"
-        uk-tooltip="Gửi quà cho cặp đôi" uk-toggle>
-        <i class="ri-gift-2-fill text-white uk-text-large"></i>
+<div class="uk-position-fixed uk-position-bottom-right uk-position-small gift" style="bottom: 4rem">
+    <a style="width: 70px; height: 70px;" href="#modal-gift"
+        class="btn-icon uk-icon-link uk-position-relative bg-primary-color" uk-tooltip="Gửi quà cho cặp đôi" uk-toggle>
+        <i style="font-size: 36px;" class="ri-gift-2-fill text-white uk-text-large"></i>
     </a>
 </div>
 

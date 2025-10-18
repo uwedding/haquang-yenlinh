@@ -1932,4 +1932,21 @@
         }
 
     };
+
+    ocument.addEventListener('click', function autoPlayOnce() {
+        // Chỉ phát nếu audio đang dừng
+        if (myAudio.paused) {
+            myAudio.play().then(() => {
+                updateButton();
+            }).catch(err => {
+                console.log('Autoplay bị chặn:', err);
+            });
+        }
+        // Gỡ event sau lần click đầu tiên
+        document.removeEventListener('click', autoPlayOnce);
+    });
+
+    // Cập nhật icon khi trạng thái audio thay đổi (phòng trường hợp người dùng bấm pause ngoài)
+    myAudio.addEventListener('play', updateButton);
+    myAudio.addEventListener('pause', updateButton);
 </script>

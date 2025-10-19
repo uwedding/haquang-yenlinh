@@ -1894,6 +1894,8 @@
 </script>
 <script>
     var myAudio = document.getElementById("audio_play");
+    var btn = document.querySelector(".btn_play");
+    console.log(22222, myAudio.paused)
     myAudio.play();
     if (myAudio.paused) {
         $('.btn_play').html('<i class="ti ti-player-play "></i>')
@@ -1903,13 +1905,9 @@
     }
     function updateButton() {
         if (myAudio.paused) {
-            btn.innerHTML = '<i class="ti ti-player-play"></i>'; // trạng thái dừng
+            $('.btn_play').html('<i class="ti ti-player-play "></i>')
         } else {
-            btn.innerHTML = `
-      <span class="spinner-border border-0 d-flex justify-content-center align-items-center">
-        <i class="ti ti-music"></i>
-      </span>
-    `; // trạng thái đang phát
+            $('.btn_play').html('<span class="spinner-border border-0 d-flex justify-content-center align-items-center"><i class="ti ti-music "></i> </span>')
         }
     }
     function togglePlay() {
@@ -1924,20 +1922,28 @@
 
     };
 
-    document.addEventListener('click', function autoPlayOnce() {
-        // Chỉ phát nếu audio đang dừng
+    // 🔥 Hàm tự phát nhạc sau hành động đầu tiên bất kỳ
+    function enableAutoPlayOnce() {
         if (myAudio.paused) {
             myAudio.play().then(() => {
                 updateButton();
-            }).catch(err => {
-                console.log('Autoplay bị chặn:', err);
-            });
+                console.log("🎵 Bắt đầu phát nhạc sau hành động đầu tiên");
+            }).catch(err => console.log("⚠️ Autoplay bị chặn:", err));
         }
-        // Gỡ event sau lần click đầu tiên
-        document.removeEventListener('click', autoPlayOnce);
-    });
 
-    // Cập nhật icon khi trạng thái audio thay đổi (phòng trường hợp người dùng bấm pause ngoài)
+        // Gỡ tất cả listener để tránh gọi lại
+        userEvents.forEach(e => document.removeEventListener(e, enableAutoPlayOnce));
+    }
+
+    // Các event "interaction" có thể tính là user gesture trên mobile
+    const userEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'scroll'];
+
+    // Gắn tất cả event này
+    userEvents.forEach(e => document.addEventListener(e, enableAutoPlayOnce, { once: true }));
+
+    // Cập nhật icon khi trạng thái nhạc đổi
     myAudio.addEventListener('play', updateButton);
     myAudio.addEventListener('pause', updateButton);
+    btn.addEventListener('click', updateButton);
+
 </script>

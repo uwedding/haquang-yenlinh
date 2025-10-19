@@ -1944,6 +1944,7 @@
         const userEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown', 'scroll'];
         function handleFirstUserInteraction(e) {
             // chỉ thực hiện khi audio đang tạm dừng
+            console.log("User interaction detected:", myAudio.paused);
             if (myAudio.paused) {
                 // cố gắng phát (một promise)
                 myAudio.play().then(() => {
@@ -1956,13 +1957,14 @@
                 });
             }
             // gỡ toàn bộ listener để chỉ chạy 1 lần
-            userEvents.forEach(ev => document.removeEventListener(ev, setTimeout(handleFirstUserInteraction, 100), true));
+            userEvents.forEach(ev => document.removeEventListener(ev, handleFirstUserInteraction, true));
+
         }
 
         document.addEventListener("click", () => console.log("click detected"));
 
         // Đăng ký lắng nghe sự kiện với capture=true và { once: false } để chủ động remove sau khi gọi
-        userEvents.forEach(ev => document.addEventListener(ev, setTimeout(handleFirstUserInteraction, 100), { capture: true }));
+        userEvents.forEach(ev => document.addEventListener(ev, handleFirstUserInteraction, { capture: true }));
 
         // Đặt icon khởi tạo
         setPlayIcon();

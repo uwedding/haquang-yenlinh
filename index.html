@@ -1949,19 +1949,19 @@
                 // cố gắng phát (một promise)
                 myAudio.play().then(() => {
                     console.log("🎵 Bắt đầu phát nhạc sau hành động đầu tiên");
+                    // gỡ toàn bộ listener để chỉ chạy 1 lần
                     updateButton();
+                    userEvents.forEach(ev => document.removeEventListener(ev, handleFirstUserInteraction, true));
                 }).catch(err => {
                     // Nếu bị chặn, hiển thị icon play để user tự nhấn
                     console.log("⚠️ Autoplay bị chặn hoặc lỗi:", err);
                     updateButton();
                 });
             }
-            // gỡ toàn bộ listener để chỉ chạy 1 lần
-            userEvents.forEach(ev => document.removeEventListener(ev, handleFirstUserInteraction, true));
 
         }
 
-        document.addEventListener("click", () => console.log("click detected"));
+        document.addEventListener("click", () => handleFirstUserInteraction);
 
         // Đăng ký lắng nghe sự kiện với capture=true và { once: false } để chủ động remove sau khi gọi
         userEvents.forEach(ev => document.addEventListener(ev, handleFirstUserInteraction, { capture: true }));

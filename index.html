@@ -1893,61 +1893,77 @@
 
 </script>
 <script>
-    var myAudio = document.getElementById("audio_play");
-    var btn = document.querySelector(".btn_play");
+    // Audio: KHÔNG autoplay khi load. Phát 1 lần sau hành động người dùng (desktop + mobile).
+    (function () {
+        const myAudioEl = document.getElementById("audio_play");
+        const btnEl = document.querySelector(".btn_play");
 
-    myAudio.play();
-    if (myAudio.paused) {
-        $('.btn_play').html('<i class="ti ti-player-play "></i>')
-    }
-    else {
-        $('.btn_play').html('<span class="spinner-border border-0 d-flex justify-content-center align-items-center"><i class="ti ti-music "></i> </span>')
-    }
-    function updateButton() {
-        if (myAudio.paused) {
-            $('.btn_play').html('<i class="ti ti-player-play "></i>')
-        } else {
-            $('.btn_play').html('<span class="spinner-border border-0 d-flex justify-content-center align-items-center"><i class="ti ti-music "></i> </span>')
+        if (!myAudioEl) return;
+
+        const myAudio = myAudioEl; // <audio> element
+        // khởi tạo icon ban đầu (chưa phát)
+        function setPlayIcon() {
+            if (btnEl) $('.btn_play').html('<i class="ti ti-player-play "></i>');
         }
-    }
-    function togglePlay() {
-
-        if (myAudio.paused) {
-            myAudio.play();
-            $('.btn_play').html('<span class="spinner-border border-0 d-flex justify-content-center align-items-center"><i class="ti ti-music "></i> </span>')
-        } else {
-            myAudio.pause();
-            $('.btn_play').html('<i class="ti ti-player-play "></i>')
+        function setPlayingIcon() {
+            if (btnEl) $('.btn_play').html('<span class="spinner-border border-0 d-flex justify-content-center align-items-center"><i class="ti ti-music "></i> </span>');
+        }
+        function updateButton() {
+            if (myAudio.paused) setPlayIcon();
+            else setPlayingIcon();
         }
 
-    };
-
-    // 🔥 Hàm tự phát nhạc sau hành động đầu tiên bất kỳ
-    function enableAutoPlayOnce() {
-        console.log('vaoday')
-        if (myAudio.paused) {
-            setTimeout(() => myAudio.play(), 0);
-            myAudio.play().then(() => {
+        // Toggle khi bấm nút
+        function togglePlay() {
+            if (myAudio.paused) {
+                myAudio.play().then(() => {
+                    updateButton();
+                }).catch(err => {
+                    console.log("Autoplay blocked or play error:", err);
+                    updateButton();
+                });
+            } else {
+                myAudio.pause();
                 updateButton();
-                console.log("🎵 Bắt đầu phát nhạc sau hành động đầu tiên");
-            }).catch(err => console.log("⚠️ Autoplay bị chặn:", err));
+            }
         }
 
-        // Gỡ tất cả listener để tránh gọi lại
-        // userEvents.forEach(e => document.removeEventListener(e, enableAutoPlayOnce));
-    }
+        // Gắn sự kiện cho nút nếu có
+        if (btnEl) {
+            btnEl.addEventListener('click', function (e) {
+                e.preventDefault();
+                togglePlay();
+            });
+        }
 
-    // Các event "interaction" có thể tính là user gesture trên mobile
-    const userEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'scroll'];
+        // Sự kiện audio thay đổi trạng thái -> cập nhật icon
+        myAudio.addEventListener('play', updateButton);
+        myAudio.addEventListener('pause', updateButton);
 
-    // Gắn tất cả event này
-    userEvents.forEach(e => document.addEventListener(e, enableAutoPlayOnce, { once: true }));
+        // Sự kiện user interaction để thử phát nhạc MỘT LẦN
+        const userEvents = ['click', 'touchstart', 'touchend', 'pointerdown', 'keydown', 'scroll'];
+        function handleFirstUserInteraction(e) {
+            // chỉ thực hiện khi audio đang tạm dừng
+            if (myAudio.paused) {
+                // cố gắng phát (một promise)
+                myAudio.play().then(() => {
+                    console.log("🎵 Bắt đầu phát nhạc sau hành động đầu tiên");
+                    updateButton();
+                }).catch(err => {
+                    // Nếu bị chặn, hiển thị icon play để user tự nhấn
+                    console.log("⚠️ Autoplay bị chặn hoặc lỗi:", err);
+                    updateButton();
+                });
+            }
+            // gỡ toàn bộ listener để chỉ chạy 1 lần
+            userEvents.forEach(ev => document.removeEventListener(ev, handleFirstUserInteraction, true));
+        }
 
-    document.addEventListener('click', enableAutoPlayOnce)
+        // Đăng ký lắng nghe sự kiện với capture=true và { once: false } để chủ động remove sau khi gọi
+        userEvents.forEach(ev => document.addEventListener(ev, handleFirstUserInteraction, { capture: true }));
 
-    // Cập nhật icon khi trạng thái nhạc đổi
-    myAudio.addEventListener('play', updateButton);
-    myAudio.addEventListener('pause', updateButton);
-    btn.addEventListener('click', updateButton);
+        // Đặt icon khởi tạo
+        setPlayIcon();
+    })();
 
 </script>

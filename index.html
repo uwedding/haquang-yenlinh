@@ -1956,11 +1956,13 @@
                 });
             }
             // gỡ toàn bộ listener để chỉ chạy 1 lần
-            userEvents.forEach(ev => document.removeEventListener(ev, handleFirstUserInteraction, true));
+            userEvents.forEach(ev => document.removeEventListener(ev, setTimeout(handleFirstUserInteraction, 100), true));
         }
 
+        document.addEventListener("click", () => console.log("click detected"));
+
         // Đăng ký lắng nghe sự kiện với capture=true và { once: false } để chủ động remove sau khi gọi
-        userEvents.forEach(ev => document.addEventListener(ev, handleFirstUserInteraction, { capture: true }));
+        userEvents.forEach(ev => document.addEventListener(ev, setTimeout(handleFirstUserInteraction, 100), { capture: true }));
 
         // Đặt icon khởi tạo
         setPlayIcon();
